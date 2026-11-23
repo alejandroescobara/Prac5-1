@@ -5,7 +5,8 @@
 
 #include "Particle.hpp"
 #include "Obstacle.hpp"
-#include "DataManager.hpp"
+
+class DataManager;
 
 struct Box {
   float width{100.0f};
@@ -36,7 +37,8 @@ class Simulator {
       QVector2D normal;  // Normal unitaria hacia adentro
     };
 
-    float currentTime{0.0f};
+    float currentTime = 0.0f;
+    bool  scenarioLogged = false;
 
     bool isCollision(const Particle& p, QVector2D& contactPoint) const;
 

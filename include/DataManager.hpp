@@ -8,22 +8,24 @@
 #include "Particle.hpp"
 #include "Obstacle.hpp"
 
+struct Box;
+
 class DataManager {
 private:
-  std::ofstream positionsFile;
-  std::ofstream collisionsFile;
+  std::ofstream outFile;
 
 public:
-  explicit DataManager(const std::string& positionsPath = "posiciones.txt",
-                       const std::string& collisionsPath = "colisiones.txt");
+  explicit DataManager(const std::string& outputPath = "simulacion.txt");
   ~DataManager();
+
+  void logScenario(const Box& b, const std::vector<Obstacle>& obstacles);
 
   void logPositions(float time, const std::vector<Particle>& particles);
 
   // Particula - Caja
   void logCollision(float time, const Particle& p, const QVector2D& contactPoint);
 
-  // Particula - Obstáculo
+  // Particula - Obstaculo
   void logCollision(float time, const Particle& p, const Obstacle& obs, const QVector2D& contactPoint);
 
   // Particula - Particula

@@ -1,8 +1,12 @@
 #include "Simulator.hpp"
 
+
+#include <cstdint>
 #include <algorithm>
 #include <cmath>
 #include <cstddef>
+
+#include "DataManager.hpp"
 
 namespace {
 
@@ -186,7 +190,7 @@ Simulator& Simulator::operator+=(Particle& newParticle) {
   if (!isValidParticle(newParticle.getPosition(), newParticle.getRadius())) {
     return *this;
   }
-  newParticle.setId(static_cast<int>(particles.size()));
+  newParticle.setId(static_cast<uint32_t>(particles.size()));
   particles.push_back(newParticle);
   return *this;
 }
@@ -198,7 +202,7 @@ Simulator& Simulator::operator+=(Obstacle& newObstacle) {
   if (!isValidObstacle(pos, size)) {
     return *this;
   }
-  newObstacle.setId(static_cast<int>(obstacles.size()));
+  newObstacle.setId(static_cast<uint32_t>(obstacles.size()));
   obstacles.push_back(newObstacle);
   return *this;
 }
@@ -329,8 +333,10 @@ void Simulator::resolveParticleCollisions() {
 }
 
 void Simulator::step() {
-  if (currentTime == 0.0f) {
+  if (!scenarioLogged) {
+    logger.logScenario(box, obstacles);
     logger.logPositions(currentTime, particles);
+    scenarioLogged = true;
   }
 
   for (auto& p : particles) {

@@ -11,12 +11,8 @@
 #include "Simulator.hpp"
 
 int main() {
-  // =========================================================================
-  // 1. ZONA DE CONFIGURACION DEL USUARIO (Edita unicamente esta seccion)
-  // =========================================================================
 
-  const std::string ARCHIVO_POSICIONES = "posiciones.txt";
-  const std::string ARCHIVO_COLISIONES = "colisiones.txt";
+  const std::string ARCHIVO_SALIDA = "simulacion.txt";
 
   const float ANCHO_CAJA   = 100.0f;
   const float ALTO_CAJA    = 100.0f;
@@ -28,21 +24,17 @@ int main() {
     Obstacle(QVector2D(70.0f, 20.0f), 10.0f)
   };
 
-  // Particulas: Particle(QVector2D(x, y), QVector2D(vx, vy), radio, masa)
+  // Particulas: Particle(QVector2D(x, y), QVector2D(vx, vy), masa, radio)
   std::vector<Particle> particulasIniciales = {
-    Particle(QVector2D(20.0f, 80.0f), QVector2D( 25.0f,  -2.0f), 3.0f, 5.0f),
-    Particle(QVector2D(55.0f, 78.0f), QVector2D(-20.0f,   0.0f), 2.5f, 3.0f),
-    Particle(QVector2D(15.0f, 47.0f), QVector2D( 35.0f,   3.0f), 2.5f, 4.0f),
+    Particle(QVector2D(20.0f, 80.0f), QVector2D( 25.0f,  -2.0f), 5.0f, 3.0f),
+    Particle(QVector2D(55.0f, 78.0f), QVector2D(-20.0f,   0.0f), 3.0f, 2.5f),
+    Particle(QVector2D(15.0f, 47.0f), QVector2D( 35.0f,   3.0f), 4.0f, 2.5f),
     Particle(QVector2D(15.0f, 15.0f), QVector2D(-28.0f, -22.0f), 2.0f, 2.0f),
-    Particle(QVector2D(85.0f, 65.0f), QVector2D(-18.0f, -25.0f), 2.2f, 3.5f)
+    Particle(QVector2D(85.0f, 65.0f), QVector2D(-18.0f, -25.0f), 3.5f, 2.2f)
   };
 
-  // =========================================================================
-  // 2. EJECUCION DEL SIMULADOR (No es necesario modificar de aqui en adelante)
-  // =========================================================================
-
   Box box{ANCHO_CAJA, ALTO_CAJA};
-  DataManager logger(ARCHIVO_POSICIONES, ARCHIVO_COLISIONES);
+  DataManager logger(ARCHIVO_SALIDA);
   Simulator sim(box, logger);
 
   std::cout << "=== CARGANDO ESCENARIO ===\n";
@@ -85,18 +77,19 @@ int main() {
   }
 
   int eventosColision = 0;
-  std::ifstream inCol(ARCHIVO_COLISIONES);
+  std::ifstream inFile(ARCHIVO_SALIDA);
   std::string linea;
-  while (std::getline(inCol, linea)) {
-    ++eventosColision;
+  while (std::getline(inFile, linea)) {
+    if (linea.rfind("C ", 0) == 0) {
+      ++eventosColision;
+    }
   }
-  if (eventosColision > 0) --eventosColision;
 
   std::cout << "=== SIMULACION FINALIZADA ===\n";
   std::cout << "Tiempo simulado:         " << sim.getCurrentTime() << " s (" << totalPasos << " pasos)\n";
   std::cout << "Particulas al final:     " << sobrevivientes << " activas\n";
   std::cout << "Colisiones registradas:  " << eventosColision << "\n";
-  std::cout << "Archivos generados:      " << ARCHIVO_POSICIONES << " y " << ARCHIVO_COLISIONES << "\n";
+  std::cout << "Archivo generado:        " << ARCHIVO_SALIDA << "\n";
 
   return 0;
 }
